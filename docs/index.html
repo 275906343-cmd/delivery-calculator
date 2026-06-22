@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>配送计算器 · 久诺瓷砖胶</title>
-<meta name="description" content="久诺固界瓷砖胶济南同城配送计算器">
+<meta name="description" content="久诺固界瓷砖胶济南同城配送计算器 · 多产品组合配送">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="配送计算器">
@@ -41,15 +41,58 @@
 
   label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text2); }
   select, input {
-    width: 100%; padding: 11px 12px; font-size: 16px;
-    border: 1px solid var(--border); border-radius: 8px;
+    padding: 10px 8px; font-size: 14px;
+    border: 1px solid var(--border); border-radius: 6px;
     background: #fff; color: var(--text);
     -webkit-appearance: none; appearance: none;
-    margin-bottom: 10px;
   }
-  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
-  input { font-size: 18px; font-weight: 700; text-align: center; }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 6px center; padding-right: 22px; }
 
+  /* ── Cart items ── */
+  .cart-item {
+    display: flex; flex-wrap: wrap; align-items: center; gap: 6px;
+    padding: 10px; margin-bottom: 6px; background: #fafafa;
+    border: 1px solid var(--border); border-radius: 8px;
+    position: relative;
+  }
+  .cart-item select { flex: 1 1 100%; min-width: 0; font-size: 13px; }
+  .cart-item .qty-wrap {
+    display: flex; align-items: center; gap: 4px;
+    flex: 0 0 auto;
+  }
+  .cart-item .qty-wrap label { margin: 0; font-size: 11px; white-space: nowrap; }
+  .cart-item .qty-wrap input {
+    width: 52px; text-align: center; font-size: 14px; font-weight: 700;
+    padding: 8px 4px; margin: 0;
+  }
+  .cart-item .line-total {
+    font-size: 13px; font-weight: 700; color: var(--accent);
+    min-width: 56px; text-align: right; white-space: nowrap;
+  }
+  .cart-item .btn-remove {
+    width: 26px; height: 26px; padding: 0; border: none; border-radius: 50%;
+    background: #eee; color: var(--text2); font-size: 14px; line-height: 26px;
+    text-align: center; cursor: pointer; flex: 0 0 auto;
+  }
+  .cart-item .btn-remove:active { background: var(--accent-light); color: var(--accent); }
+
+  .btn-add {
+    width: 100%; padding: 10px; font-size: 13px; font-weight: 600;
+    border: 2px dashed var(--border); border-radius: 8px;
+    background: transparent; color: var(--text2); cursor: pointer;
+    transition: all 0.15s;
+  }
+  .btn-add:active { border-color: var(--blue); color: var(--blue); background: var(--blue-light); }
+
+  .cart-summary {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .cart-summary .summary-label { color: var(--text2); }
+  .cart-summary .summary-value { font-weight: 700; font-size: 15px; color: var(--accent); }
+
+  /* ── Results ── */
   .result-row {
     display: flex; justify-content: space-between; align-items: center;
     padding: 9px 0; border-bottom: 1px solid var(--border);
@@ -84,6 +127,8 @@
   }
   .script-box strong { color: var(--orange); }
 
+  .product-list-inline { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
   .footer { text-align: center; margin-top: 16px; padding-bottom: 20px; color: var(--text2); font-size: 11px; }
 
   .install-banner {
@@ -96,12 +141,14 @@
     margin-left: 8px; padding: 4px 12px; font-size: 12px;
     background: var(--blue); color: #fff; border: none; border-radius: 4px;
   }
+
+  .topup-hint { font-size: 11px; color: var(--text2); margin-top: 4px; }
 </style>
 </head>
 <body>
 
 <h1>🧱 配送计算器</h1>
-<p class="subtitle">久诺·固界瓷砖胶 · 济南同城</p>
+<p class="subtitle">久诺·固界瓷砖胶 · 济南同城 · 多产品组合</p>
 
 <div class="install-banner" id="installBanner">
   💡 添加到桌面，下次秒开
@@ -109,32 +156,15 @@
 </div>
 
 <div class="card">
-  <h2>📦 产品</h2>
-  <label>选择产品</label>
-  <select id="product" onchange="calc()">
-    <optgroup label="好房子系列 · 瓷砖胶">
-      <option value="28" data-name="G01 易贴 C0">G01 易贴 C0 · ¥28/袋</option>
-      <option value="43" data-name="G02 大砖 C1T">G02 大砖 C1T · ¥43/袋</option>
-      <option value="60" data-name="G03 大板 C2TE" selected>G03 大板 C2TE · ¥60/袋 ⭐</option>
-      <option value="95" data-name="G04 高柔 C2ES1">G04 高柔 C2ES1 · ¥95/袋</option>
-      <option value="110" data-name="G05 外墙专用 C2TES1">G05 外墙专用 C2TES1 · ¥110/袋</option>
-      <option value="120" data-name="G06 石材重砖 C2TES1">G06 石材重砖 C2TES1 · ¥120/袋</option>
-    </optgroup>
-    <optgroup label="好房子系列 · 配套品类">
-      <option value="190" data-name="B07 单组份背胶 5kg">B07 单组份背胶 5kg · ¥190</option>
-      <option value="230" data-name="B08 双组份背胶 18kg">B08 双组份背胶 18kg · ¥230</option>
-      <option value="130" data-name="W09 刚性防水 18kg">W09 刚性防水 18kg · ¥130</option>
-      <option value="240" data-name="W10 柔性防水 18kg">W10 柔性防水 18kg · ¥240</option>
-      <option value="12" data-name="W11 堵漏Pro 2kg">W11 堵漏Pro 2kg · ¥12</option>
-      <option value="180" data-name="J12 固沙界面剂 5kg">J12 固沙界面剂 5kg · ¥180</option>
-      <option value="160" data-name="J13 拉毛界面剂 18kg">J13 拉毛界面剂 18kg · ¥160</option>
-    </optgroup>
-  </select>
+  <h2>📦 产品清单</h2>
+  <div id="cartItems"></div>
+  <button class="btn-add" onclick="addItem()" id="btnAdd">+ 添加产品</button>
+  <div class="cart-summary">
+    <span class="summary-label" id="summaryLabel">—</span>
+    <span class="summary-value" id="summaryValue">—</span>
+  </div>
 
-  <label>数量（袋）</label>
-  <input type="number" id="quantity" value="10" min="1" max="200" inputmode="numeric" onchange="calc()" oninput="calc()">
-
-  <label>配送区域</label>
+  <label style="margin-top:12px;">配送区域</label>
   <select id="zone" onchange="calc()">
     <option value="0" data-name="天桥区" data-dist="0-5km" data-cost="30" data-threshold="600">Z1 天桥区（0-5km）</option>
     <option value="1" data-name="市中·槐荫·历城" data-dist="5-10km" data-cost="40" data-threshold="800">Z2 市中·槐荫·历城（5-10km）</option>
@@ -155,6 +185,23 @@
 </div>
 
 <script>
+// ── 产品目录 ──
+const CATALOG = [
+  { id:'G01', name:'G01 易贴 C0', price:28, cat:'瓷砖胶' },
+  { id:'G02', name:'G02 大砖 C1T', price:43, cat:'瓷砖胶' },
+  { id:'G03', name:'G03 大板 C2TE', price:60, cat:'瓷砖胶' },
+  { id:'G04', name:'G04 高柔 C2ES1', price:95, cat:'瓷砖胶' },
+  { id:'G05', name:'G05 外墙专用 C2TES1', price:110, cat:'瓷砖胶' },
+  { id:'G06', name:'G06 石材重砖 C2TES1', price:120, cat:'瓷砖胶' },
+  { id:'B07', name:'B07 单组份背胶 5kg', price:190, cat:'配套' },
+  { id:'B08', name:'B08 双组份背胶 18kg', price:230, cat:'配套' },
+  { id:'W09', name:'W09 刚性防水 18kg', price:130, cat:'配套' },
+  { id:'W10', name:'W10 柔性防水 18kg', price:240, cat:'配套' },
+  { id:'W11', name:'W11 堵漏Pro 2kg', price:12, cat:'配套' },
+  { id:'J12', name:'J12 固沙界面剂 5kg', price:180, cat:'配套' },
+  { id:'J13', name:'J13 拉毛界面剂 18kg', price:160, cat:'配套' },
+];
+
 const ZONES = [
   { name:'天桥区', dist:'0-5km', cost:30, threshold:600 },
   { name:'市中·槐荫·历城', dist:'5-10km', cost:40, threshold:800 },
@@ -162,54 +209,151 @@ const ZONES = [
   { name:'章丘·济阳', dist:'20-50km', cost:0, threshold:Infinity },
 ];
 
+const MAX_ITEMS = 6;
+
+// Cart state: [{id: 'G03', qty: 5}, ...]
+let cart = [{ id: 'G03', qty: 10 }];
 let lastResult = {};
 
+// ── Render ──
+function renderCart() {
+  const container = document.getElementById('cartItems');
+  let html = '';
+
+  cart.forEach((item, i) => {
+    const prod = CATALOG.find(p => p.id === item.id) || CATALOG[0];
+    const lineTotal = prod.price * item.qty;
+    const catLabel = prod.cat === '瓷砖胶' ? '瓷砖胶' : '配套';
+
+    html += `<div class="cart-item">
+      <select onchange="cart[${i}].id=this.value;calc();" data-i="${i}">
+        <optgroup label="瓷砖胶">
+          ${CATALOG.filter(p => p.cat==='瓷砖胶').map(p =>
+            `<option value="${p.id}" ${item.id===p.id?'selected':''}>${p.name} · ¥${p.price}/袋</option>`
+          ).join('')}
+        </optgroup>
+        <optgroup label="配套品类">
+          ${CATALOG.filter(p => p.cat==='配套').map(p =>
+            `<option value="${p.id}" ${item.id===p.id?'selected':''}>${p.name} · ¥${p.price}</option>`
+          ).join('')}
+        </optgroup>
+      </select>
+      <div class="qty-wrap">
+        <label>×</label>
+        <input type="number" value="${item.qty}" min="1" max="200" inputmode="numeric"
+          onchange="cart[${i}].qty=Math.max(1,parseInt(this.value)||1);renderCart();calc();"
+          oninput="cart[${i}].qty=Math.max(1,parseInt(this.value)||1);calc();">
+      </div>
+      <span class="line-total">¥${lineTotal.toLocaleString()}</span>
+      ${cart.length > 1 ? `<button class="btn-remove" onclick="removeItem(${i})" title="移除">✕</button>` : ''}
+    </div>`;
+  });
+
+  container.innerHTML = html;
+
+  // Show/hide add button
+  document.getElementById('btnAdd').style.display = cart.length >= MAX_ITEMS ? 'none' : 'block';
+
+  // Update summary
+  const totals = getTotals();
+  document.getElementById('summaryLabel').textContent =
+    `📦 ${cart.length}种 · ${totals.totalQty}袋`;
+  document.getElementById('summaryValue').textContent =
+    `¥${totals.orderValue.toLocaleString()}`;
+}
+
+function getTotals() {
+  let totalQty = 0;
+  let orderValue = 0;
+  cart.forEach(item => {
+    const prod = CATALOG.find(p => p.id === item.id);
+    if (prod) {
+      totalQty += item.qty;
+      orderValue += prod.price * item.qty;
+    }
+  });
+  return { totalQty, orderValue };
+}
+
+function addItem() {
+  if (cart.length >= MAX_ITEMS) return;
+  // Find a product not yet in cart
+  const inCart = new Set(cart.map(i => i.id));
+  const next = CATALOG.find(p => !inCart.has(p.id)) || CATALOG[0];
+  cart.push({ id: next.id, qty: 1 });
+  renderCart();
+  calc();
+}
+
+function removeItem(i) {
+  if (cart.length <= 1) return;
+  cart.splice(i, 1);
+  renderCart();
+  calc();
+}
+
+// ── Calculate ──
 function calc() {
-  const prodSel = document.getElementById('product');
-  const price = parseInt(prodSel.value);
-  const prodName = prodSel.selectedOptions[0].dataset.name;
-  const qty = parseInt(document.getElementById('quantity').value) || 1;
   const zi = parseInt(document.getElementById('zone').value);
   const zone = ZONES[zi];
+  const totals = getTotals();
+  const { totalQty, orderValue } = totals;
 
-  const orderValue = price * qty;
   const deliveryCost = zone.cost;
   const threshold = zone.threshold;
   const isFree = orderValue >= threshold && zi < 3;
   const costPct = orderValue > 0 ? (deliveryCost / orderValue * 100).toFixed(1) : 0;
 
+  // Build product list string
+  const itemsDesc = cart.map(item => {
+    const prod = CATALOG.find(p => p.id === item.id);
+    return prod ? `${prod.name} ×${item.qty}袋` : '';
+  }).filter(Boolean).join('、');
+
   let verdictHtml, verdictClass, action;
+
   if (zi === 3) {
     verdictClass = 'pickup';
     verdictHtml = '🚛 Z4 郊区 · 德邦零担<br>运费客户自付实费';
-    action = '你在章丘/济阳，不在此同城配送范围。走德邦零担，运费按实际重量算，大概 ¥40-80。或者你路过天桥区黄台建材市场来自提，我帮你装车。';
+    action = `你在章丘/济阳，不在同城配送范围。走德邦零担，运费按实际重量算，大概 ¥40-80。或者你路过天桥区黄台建材市场来自提，我帮你装车。`;
   } else if (isFree) {
     verdictClass = 'free';
     verdictHtml = `✅ 免费配送！<br>货值 ¥${orderValue.toLocaleString()} ≥ ¥${threshold.toLocaleString()}`;
-    action = `这个量已经到免费配送门槛了（¥${threshold.toLocaleString()}），我直接安排货拉拉送到你家楼下。天桥区黄台建材市场发车。`;
+    action = `组合货值 ¥${orderValue.toLocaleString()} 已到免费配送门槛（¥${threshold.toLocaleString()}），我直接安排货拉拉送到你家楼下。天桥区黄台建材市场发车。`;
   } else if (orderValue < 300) {
     verdictClass = 'pickup';
-    verdictHtml = `📍 货值偏低 · 建议自提<br>配送费占比${costPct}%`;
+    verdictHtml = `📍 货值偏低 · 建议自提<br>配送费占比 ${costPct}%`;
     action = `单袋走配送不划算，运费比东西还贵。你在${zone.name}，方便来天桥区黄台建材市场自提吗？我帮你装车，当面讲施工注意事项。`;
   } else {
     verdictClass = 'pay';
-    verdictHtml = `🚚 需付配送费 ¥${deliveryCost}<br>差 ¥${(threshold-orderValue).toLocaleString()} 到免费门槛`;
-    const needMore = Math.ceil((threshold - orderValue) / price);
-    action = `你在${zone.name}（Z${zi+1}区）。当前${qty}袋货值¥${orderValue.toLocaleString()}，还差¥${(threshold-orderValue).toLocaleString()}（约${needMore}袋）到免费配送。方案一：加${needMore}袋免运费；方案二：配送费¥${deliveryCost}（货值${costPct}%）；方案三：来黄台自提免运费。你看哪个合适？`;
+    const gap = threshold - orderValue;
+    verdictHtml = `🚚 需付配送费 ¥${deliveryCost}<br>还差 ¥${gap.toLocaleString()} 到免费门槛`;
+
+    // Smart top-up suggestion: find cheapest product to fill gap
+    const cheapest = CATALOG.reduce((a, b) => a.price < b.price ? a : b);
+    const cheapestBags = Math.ceil(gap / cheapest.price);
+    const topSeller = CATALOG.find(p => p.id === 'G03') || CATALOG[0];
+    const topSellerBags = Math.ceil(gap / topSeller.price);
+
+    action = `你在${zone.name}（Z${zi+1}区）。当前组合货值 ¥${orderValue.toLocaleString()}，还差 ¥${gap.toLocaleString()} 到免费配送（¥${threshold.toLocaleString()}）。\n\n方案一：加 ${topSellerBags} 袋 ${topSeller.name}（¥${(topSeller.price*topSellerBags).toLocaleString()}）或 ${cheapestBags} 袋 ${cheapest.name}（¥${(cheapest.price*cheapestBags).toLocaleString()}），凑到门槛免运费\n方案二：付配送费 ¥${deliveryCost}（货值 ${costPct}%）\n方案三：来黄台自提免运费\n\n你看哪个合适？`;
   }
 
-  lastResult = { prodName, price, qty, zoneName:zone.name, orderValue, deliveryCost, threshold, isFree, costPct, action };
+  lastResult = {
+    itemsDesc, totalQty, orderValue, zoneName: zone.name, zoneDist: zone.dist,
+    deliveryCost, threshold, isFree, costPct, action, zi, verdictClass
+  };
 
+  // Render results
   document.getElementById('result').innerHTML = `
-    <div class="result-row"><span class="result-label">产品</span><span class="result-value">${prodName}</span></div>
-    <div class="result-row"><span class="result-label">数量</span><span class="result-value">${qty} 袋</span></div>
-    <div class="result-row"><span class="result-label">区域</span><span class="result-value">${zone.name}</span></div>
-    <div class="result-row"><span class="result-label">货值</span><span class="result-value big">¥${orderValue.toLocaleString()}</span></div>
+    <div class="result-row"><span class="result-label">产品组合</span><span class="result-value" style="font-size:11px;font-weight:400;">${itemsDesc}</span></div>
+    <div class="result-row"><span class="result-label">总数量</span><span class="result-value">${totalQty} 袋</span></div>
+    <div class="result-row"><span class="result-label">区域</span><span class="result-value">${zone.name}（${zone.dist}）</span></div>
+    <div class="result-row"><span class="result-label">组合货值</span><span class="result-value big">¥${orderValue.toLocaleString()}</span></div>
     <div class="result-row"><span class="result-label">配送成本</span><span class="result-value">${zi < 3 ? '¥'+deliveryCost : '德邦到付'}</span></div>
     <div class="result-row"><span class="result-label">免费门槛</span><span class="result-value">${zi < 3 ? '¥'+threshold.toLocaleString() : '不设免费'}</span></div>
     <div class="result-row"><span class="result-label">配送费占比</span><span class="result-value">${zi < 3 ? costPct+'%' : '—'}</span></div>
     <div class="verdict ${verdictClass}">${verdictHtml}</div>
-    <div class="script-box"><strong>💬 私信话术：</strong><br>${action}</div>
+    <div class="script-box"><strong>💬 私信话术：</strong><br>${action.replace(/\n/g, '<br>')}</div>
   `;
 
   document.getElementById('copyBtn').style.display = 'block';
@@ -219,8 +363,16 @@ function calc() {
 
 function copyResult() {
   const r = lastResult;
-  if (!r.prodName) return;
-  const text = `【配送报价】\n产品：${r.prodName}\n数量：${r.qty}袋\n区域：${r.zoneName}\n货值：¥${r.orderValue.toLocaleString()}\n配送成本：${r.deliveryCost > 0 ? '¥'+r.deliveryCost+'（'+r.costPct+'%）' : '德邦到付'}\n\n💬 ${r.action}`;
+  if (!r.itemsDesc) return;
+
+  let text = `【配送报价】\n`;
+  text += `产品组合：${r.itemsDesc}\n`;
+  text += `总数量：${r.totalQty}袋\n`;
+  text += `区域：${r.zoneName}（${r.zoneDist}）\n`;
+  text += `组合货值：¥${r.orderValue.toLocaleString()}\n`;
+  text += r.zi < 3 ? `配送成本：¥${r.deliveryCost}（${r.costPct}%）\n` : '配送成本：德邦到付\n';
+  text += `\n💬 ${r.action}`;
+
   navigator.clipboard.writeText(text).then(() => {
     const btn = document.getElementById('copyBtn');
     btn.textContent = '✅ 已复制！去闲鱼粘贴';
@@ -232,7 +384,7 @@ function copyResult() {
   });
 }
 
-// PWA install
+// ── PWA install ──
 let deferredPrompt;
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
@@ -257,6 +409,8 @@ if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js');
 }
 
+// Init
+renderCart();
 calc();
 </script>
 </body>
