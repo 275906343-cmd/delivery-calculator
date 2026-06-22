@@ -226,7 +226,7 @@ function renderCart() {
     const catLabel = prod.cat === '瓷砖胶' ? '瓷砖胶' : '配套';
 
     html += `<div class="cart-item">
-      <select onchange="cart[${i}].id=this.value;calc();" data-i="${i}">
+      <select onchange="cart[${i}].id=this.value;renderCart();calc();" data-i="${i}">
         <optgroup label="瓷砖胶">
           ${CATALOG.filter(p => p.cat==='瓷砖胶').map(p =>
             `<option value="${p.id}" ${item.id===p.id?'selected':''}>${p.name} · ¥${p.price}/袋</option>`
