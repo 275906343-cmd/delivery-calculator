@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>配送计算器 · 久诺瓷砖胶</title>
+<meta name="description" content="久诺固界瓷砖胶济南同城配送计算器">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="配送计算器">
+<meta name="theme-color" content="#c44536">
+<link rel="manifest" href="manifest.json">
+<style>
+  :root {
+    --bg: #f5f5f5; --card: #fff; --border: #e0e0e0;
+    --text: #1a1a2e; --text2: #888;
+    --accent: #c44536; --accent-light: #fdf0ed;
+    --blue: #2c5f8a; --blue-light: #e8f4fd;
+    --green: #2d6a4f; --green-light: #e8f5e9;
+    --orange: #E67E22; --orange-light: #fef5ec;
+    --radius: 12px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html { height: 100%; }
+  body {
+    font-family: -apple-system,"Microsoft YaHei","PingFang SC",sans-serif;
+    background: var(--bg); color: var(--text); line-height: 1.6;
+    padding: 12px; max-width: 480px; margin: 0 auto;
+    min-height: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  h1 { font-size: 20px; text-align: center; margin: 8px 0 2px; color: var(--accent); }
+  .subtitle { text-align: center; color: var(--text2); font-size: 12px; margin-bottom: 12px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .card h2 { font-size: 14px; margin-bottom: 10px; padding-bottom: 5px; border-bottom: 1px solid var(--border); }
+
+  label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 3px; color: var(--text2); }
+  select, input {
+    width: 100%; padding: 11px 12px; font-size: 16px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: #fff; color: var(--text);
+    -webkit-appearance: none; appearance: none;
+    margin-bottom: 10px;
+  }
+  select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23888' d='M6 8L1 3h10z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 32px; }
+  input { font-size: 18px; font-weight: 700; text-align: center; }
+
+  .result-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 9px 0; border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .result-row:last-child { border-bottom: none; }
+  .result-label { color: var(--text2); font-size: 12px; }
+  .result-value { font-weight: 700; text-align: right; }
+  .result-value.big { font-size: 17px; color: var(--accent); }
+
+  .verdict {
+    margin-top: 10px; padding: 12px; border-radius: 8px;
+    font-size: 14px; font-weight: 700; text-align: center; line-height: 1.5;
+  }
+  .verdict.free { background: var(--green-light); color: var(--green); border: 1px solid var(--green); }
+  .verdict.pay { background: var(--orange-light); color: var(--orange); border: 1px solid var(--orange); }
+  .verdict.pickup { background: var(--blue-light); color: var(--blue); border: 1px solid var(--blue); }
+
+  .copy-btn {
+    margin-top: 8px; padding: 12px; font-size: 14px; font-weight: 700;
+    border: none; border-radius: 8px; background: var(--accent); color: #fff;
+    width: 100%; text-align: center; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .copy-btn:active { background: #a8382e; }
+  .copied { background: var(--green) !important; }
+
+  .script-box {
+    margin-top: 10px; padding: 10px 12px; background: #f8f9fa;
+    border-radius: 8px; font-size: 12px; line-height: 1.7;
+    border-left: 3px solid var(--orange);
+  }
+  .script-box strong { color: var(--orange); }
+
+  .footer { text-align: center; margin-top: 16px; padding-bottom: 20px; color: var(--text2); font-size: 11px; }
+
+  .install-banner {
+    display: none; background: var(--blue-light); border: 1px solid var(--blue);
+    border-radius: 8px; padding: 10px 14px; margin-bottom: 12px;
+    font-size: 12px; text-align: center; color: var(--blue);
+  }
+  .install-banner.show { display: block; }
+  .install-banner button {
+    margin-left: 8px; padding: 4px 12px; font-size: 12px;
+    background: var(--blue); color: #fff; border: none; border-radius: 4px;
+  }
+</style>
+</head>
+<body>
+
+<h1>🧱 配送计算器</h1>
+<p class="subtitle">久诺·固界瓷砖胶 · 济南同城</p>
+
+<div class="install-banner" id="installBanner">
+  💡 添加到桌面，下次秒开
+  <button onclick="installPWA()">添加</button>
+</div>
+
+<div class="card">
+  <h2>📦 产品</h2>
+  <label>选择产品</label>
+  <select id="product" onchange="calc()">
+    <optgroup label="好房子系列 · 瓷砖胶">
+      <option value="28" data-name="G01 易贴 C0">G01 易贴 C0 · ¥28/袋</option>
+      <option value="43" data-name="G02 大砖 C1T">G02 大砖 C1T · ¥43/袋</option>
+      <option value="60" data-name="G03 大板 C2TE" selected>G03 大板 C2TE · ¥60/袋 ⭐</option>
+      <option value="95" data-name="G04 高柔 C2ES1">G04 高柔 C2ES1 · ¥95/袋</option>
+      <option value="110" data-name="G05 外墙专用 C2TES1">G05 外墙专用 C2TES1 · ¥110/袋</option>
+      <option value="120" data-name="G06 石材重砖 C2TES1">G06 石材重砖 C2TES1 · ¥120/袋</option>
+    </optgroup>
+    <optgroup label="好房子系列 · 配套品类">
+      <option value="190" data-name="B07 单组份背胶 5kg">B07 单组份背胶 5kg · ¥190</option>
+      <option value="230" data-name="B08 双组份背胶 18kg">B08 双组份背胶 18kg · ¥230</option>
+      <option value="130" data-name="W09 刚性防水 18kg">W09 刚性防水 18kg · ¥130</option>
+      <option value="240" data-name="W10 柔性防水 18kg">W10 柔性防水 18kg · ¥240</option>
+      <option value="12" data-name="W11 堵漏Pro 2kg">W11 堵漏Pro 2kg · ¥12</option>
+      <option value="180" data-name="J12 固沙界面剂 5kg">J12 固沙界面剂 5kg · ¥180</option>
+      <option value="160" data-name="J13 拉毛界面剂 18kg">J13 拉毛界面剂 18kg · ¥160</option>
+    </optgroup>
+  </select>
+
+  <label>数量（袋）</label>
+  <input type="number" id="quantity" value="10" min="1" max="200" inputmode="numeric" onchange="calc()" oninput="calc()">
+
+  <label>配送区域</label>
+  <select id="zone" onchange="calc()">
+    <option value="0" data-name="天桥区" data-dist="0-5km" data-cost="30" data-threshold="600">Z1 天桥区（0-5km）</option>
+    <option value="1" data-name="市中·槐荫·历城" data-dist="5-10km" data-cost="40" data-threshold="800">Z2 市中·槐荫·历城（5-10km）</option>
+    <option value="2" data-name="历下·长清" data-dist="10-20km" data-cost="60" data-threshold="1200">Z3 历下·长清（10-20km）</option>
+    <option value="3" data-name="章丘·济阳" data-dist="20-50km" data-cost="0" data-threshold="999999">Z4 章丘·济阳（德邦）</option>
+  </select>
+</div>
+
+<div class="card">
+  <h2>📊 计算结果</h2>
+  <div id="result"></div>
+  <button id="copyBtn" class="copy-btn" style="display:none;" onclick="copyResult()">📋 一键复制私信话术</button>
+</div>
+
+<div class="footer">
+  仅供内部报价 · 不在闲鱼商品页展示<br>
+  中心仓：天桥区黄台建材家居
+</div>
+
+<script>
+const ZONES = [
+  { name:'天桥区', dist:'0-5km', cost:30, threshold:600 },
+  { name:'市中·槐荫·历城', dist:'5-10km', cost:40, threshold:800 },
+  { name:'历下·长清', dist:'10-20km', cost:60, threshold:1200 },
+  { name:'章丘·济阳', dist:'20-50km', cost:0, threshold:Infinity },
+];
+
+let lastResult = {};
+
+function calc() {
+  const prodSel = document.getElementById('product');
+  const price = parseInt(prodSel.value);
+  const prodName = prodSel.selectedOptions[0].dataset.name;
+  const qty = parseInt(document.getElementById('quantity').value) || 1;
+  const zi = parseInt(document.getElementById('zone').value);
+  const zone = ZONES[zi];
+
+  const orderValue = price * qty;
+  const deliveryCost = zone.cost;
+  const threshold = zone.threshold;
+  const isFree = orderValue >= threshold && zi < 3;
+  const costPct = orderValue > 0 ? (deliveryCost / orderValue * 100).toFixed(1) : 0;
+
+  let verdictHtml, verdictClass, action;
+  if (zi === 3) {
+    verdictClass = 'pickup';
+    verdictHtml = '🚛 Z4 郊区 · 德邦零担<br>运费客户自付实费';
+    action = '你在章丘/济阳，不在此同城配送范围。走德邦零担，运费按实际重量算，大概 ¥40-80。或者你路过天桥区黄台建材市场来自提，我帮你装车。';
+  } else if (isFree) {
+    verdictClass = 'free';
+    verdictHtml = `✅ 免费配送！<br>货值 ¥${orderValue.toLocaleString()} ≥ ¥${threshold.toLocaleString()}`;
+    action = `这个量已经到免费配送门槛了（¥${threshold.toLocaleString()}），我直接安排货拉拉送到你家楼下。天桥区黄台建材市场发车。`;
+  } else if (orderValue < 300) {
+    verdictClass = 'pickup';
+    verdictHtml = `📍 货值偏低 · 建议自提<br>配送费占比${costPct}%`;
+    action = `单袋走配送不划算，运费比东西还贵。你在${zone.name}，方便来天桥区黄台建材市场自提吗？我帮你装车，当面讲施工注意事项。`;
+  } else {
+    verdictClass = 'pay';
+    verdictHtml = `🚚 需付配送费 ¥${deliveryCost}<br>差 ¥${(threshold-orderValue).toLocaleString()} 到免费门槛`;
+    const needMore = Math.ceil((threshold - orderValue) / price);
+    action = `你在${zone.name}（Z${zi+1}区）。当前${qty}袋货值¥${orderValue.toLocaleString()}，还差¥${(threshold-orderValue).toLocaleString()}（约${needMore}袋）到免费配送。方案一：加${needMore}袋免运费；方案二：配送费¥${deliveryCost}（货值${costPct}%）；方案三：来黄台自提免运费。你看哪个合适？`;
+  }
+
+  lastResult = { prodName, price, qty, zoneName:zone.name, orderValue, deliveryCost, threshold, isFree, costPct, action };
+
+  document.getElementById('result').innerHTML = `
+    <div class="result-row"><span class="result-label">产品</span><span class="result-value">${prodName}</span></div>
+    <div class="result-row"><span class="result-label">数量</span><span class="result-value">${qty} 袋</span></div>
+    <div class="result-row"><span class="result-label">区域</span><span class="result-value">${zone.name}</span></div>
+    <div class="result-row"><span class="result-label">货值</span><span class="result-value big">¥${orderValue.toLocaleString()}</span></div>
+    <div class="result-row"><span class="result-label">配送成本</span><span class="result-value">${zi < 3 ? '¥'+deliveryCost : '德邦到付'}</span></div>
+    <div class="result-row"><span class="result-label">免费门槛</span><span class="result-value">${zi < 3 ? '¥'+threshold.toLocaleString() : '不设免费'}</span></div>
+    <div class="result-row"><span class="result-label">配送费占比</span><span class="result-value">${zi < 3 ? costPct+'%' : '—'}</span></div>
+    <div class="verdict ${verdictClass}">${verdictHtml}</div>
+    <div class="script-box"><strong>💬 私信话术：</strong><br>${action}</div>
+  `;
+
+  document.getElementById('copyBtn').style.display = 'block';
+  document.getElementById('copyBtn').classList.remove('copied');
+  document.getElementById('copyBtn').textContent = '📋 一键复制私信话术';
+}
+
+function copyResult() {
+  const r = lastResult;
+  if (!r.prodName) return;
+  const text = `【配送报价】\n产品：${r.prodName}\n数量：${r.qty}袋\n区域：${r.zoneName}\n货值：¥${r.orderValue.toLocaleString()}\n配送成本：${r.deliveryCost > 0 ? '¥'+r.deliveryCost+'（'+r.costPct+'%）' : '德邦到付'}\n\n💬 ${r.action}`;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ 已复制！去闲鱼粘贴';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 一键复制私信话术'; btn.classList.remove('copied'); }, 2000);
+  }).catch(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '⚠️ 复制失败，请长按话术手动复制';
+  });
+}
+
+// PWA install
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').classList.add('show');
+});
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      document.getElementById('installBanner').classList.remove('show');
+      deferredPrompt = null;
+    });
+  } else {
+    alert('iOS: 点击浏览器底部的分享按钮 → 添加到主屏幕\nAndroid: 点击浏览器菜单 → 添加到主屏幕');
+  }
+}
+
+// Service Worker
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
+calc();
+</script>
+</body>
+</html>
